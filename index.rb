@@ -3,6 +3,7 @@
 require 'optparse'
 require 'base64'
 require 'elasticsearch'
+require 'yaml'
 
 options = {}
 
@@ -14,22 +15,22 @@ optparse = OptionParser.new do|opts|
 		options[:verbose] = true
 	end
 
-	options[:ignore_warnings] = false
-	opts.on( '--ignore_warnings', 'Suppress warnings' ) do
-		options[:ignore_warnings] = true
-	end
-
 	options[:index] = false
 	opts.on( '-i INDEX', '--index INDEX', 'Index name to use.' ) do |index|
 		options[:index] = index
 	end
 
-	options[:filetypes] = "doc,html,docx,pdf,txt"
+	options[:filetypes] = "doc,docx,pdf,html,txt"
 	opts.on( '-f TYPES', '--filetypes TYPES', 'Comma-separated list of filetypes to index. Defaults to #{options[:filetypes]}' ) do |filetypes|
 		options[:filetypes] = filetypes
 	end
 
-	options[:endpoint] = 'localhost:9200/'
+	options[:metadata] = false
+	opts.on( '-m FILE', '--metadata FILE', 'Location for a metadata file; see readme for details' ) do |file|
+		options[:metadata] = file
+	end
+
+	options[:endpoint] = 'localhost:9200'
 	opts.on( '-e URL', '--endpoint URL', 'URL for the elasticsearch instance. Defaults to localhost on 9200.' ) do |url|
 		options[:endpoint] = url
 	end
@@ -58,6 +59,10 @@ if !options[:index]
 	exit
 end
 
+if options[:metadata]
+	metadata = YAML.load(File.open(options[:metadata]))
+end
+
 index = options[:index].downcase
 
 # if the index doesn't exist, set it up with the right type
@@ -65,7 +70,7 @@ if !client.indices.exists?(index: index)
 	client.indices.create(
 		index: index,
 		type: 'document',
-		body: { mappings: { document: { properties: { content: { type: "attachment" }}}}}
+		body: { mappings: { document: { properties: { _content: { type: "attachment" }}}}}
 	)
 end
 
@@ -79,14 +84,24 @@ filepaths.each do |path|
 		if options[:verbose]
 			puts File.basename(file)
 		end
+
+		body = {
+			title: File.basename(file),
+			_id: File.realpath(file),
+			filename: File.basename(file),
+			fullpath: File.realpath(file),
+			_content: Base64.strict_encode64(IO.binread(file))
+		}
+
+		if metadata[File.basename(file)]
+			body.merge!(metadata[File.basename(file)])
+		end
+
 		client.index({
 			index: index,
 			type: 'document',
-			body: { 
-				title: File.basename(file),
-				filename: File.basename(file),
-				content: Base64.strict_encode64(IO.binread(file))
-			}
+			id: File.realpath(file),
+			body: body
 		})
 	end
 end
