@@ -2,7 +2,6 @@
 
 require 'optparse'
 require 'base64'
-require 'json'
 require 'elasticsearch'
 
 options = {}
@@ -59,6 +58,8 @@ if !options[:index]
 	exit
 end
 
+index = options[:index].downcase
+
 # if the index doesn't exist, set it up with the right type
 if !client.indices.exists?(index: index)
 	client.indices.create(
@@ -72,11 +73,14 @@ filepaths = ARGV.product(options[:filetypes].split(",")).map { |x| x.join("/**/*
 
 filepaths.each do |path|
 	files = Dir[path]
+	puts "Reading " + path
 	# write each file into the index
 	files.each do |file|
-		puts File.basename(file)
+		if options[:verbose]
+			puts File.basename(file)
+		end
 		client.index({
-			index: index.downcase,
+			index: index,
 			type: 'document',
 			body: { 
 				title: File.basename(file),
