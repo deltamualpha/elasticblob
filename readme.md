@@ -3,7 +3,7 @@ elasticblob
 
 I wrote this little collection of ruby scripts in order to better search a mixed pile of PDFs, Word documents, HTML, and plain text. Built-in OS-level search is OK if you're looking for specific phrases in a document, but if you're looking for something more general (or fuzzy), a dedicated search service is needed.
 
-Elasticsearch is simple enough to get started, and scales well. Is throwing attachments at it like this efficient? *No.* Base-64 encoding binary files takes up a lot of space -- but loading in more than a maybe ten thousand documents like this is a task for a proper, well-architected application, not a single ruby script. Go solve this problem yourself if you have a specific need for it.
+Elasticsearch is simple enough to get started, and scales well. Is throwing attachments at it like this efficient? *No.* Base-64 encoding binary files takes up a lot of space -- but loading in more than maybe, say, ten thousand documents like this is a task for a proper, well-architected application, not a single ruby script. Go solve this problem yourself if you have a specific need for it.
 
 How It Works
 ------------
