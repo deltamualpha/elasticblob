@@ -59,6 +59,8 @@ if !options[:index]
   exit
 end
 
+metadata = {}
+
 if options[:metadata]
   metadata = YAML.load(File.open(options[:metadata]))
 end
