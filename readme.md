@@ -49,5 +49,5 @@ Optional flags:
 
 * `--endpoint HOST`: hostname and port where elasticsearch is running; defaults to `localhost:9200`.
 * `--phrase`: search by complete phrase instead of word-by-word.
-* `--elements`: search only within this comma-separated list of fields. elasticblob defines a `title`, `_content`, `filename`, and `fullpath` for all documents; all others are defined during import using `metadata.yaml`.
-* `--limit`: number of results to return. Defaults to 10.
+* `--elements LIST`: search only within this comma-separated list of fields. elasticblob defines a `title`, `_content`, `filename`, and `fullpath` for all documents; all others are defined during import using `metadata.yaml`. For example, based on the metadata above, `author,subtitle,title` would be a valid elements list.
+* `--limit NUMBER`: number of results to return. Defaults to 10.
