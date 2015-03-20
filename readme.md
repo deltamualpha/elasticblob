@@ -36,3 +36,18 @@ The Next Great American Novel.doc:
 ```
 
 Avoid the use of leading underscores in key names, as this may conflict with internal elasticsearch identifiers.
+
+----
+
+Searching in an index:
+
+`search.rb --index INDEX [options] phrase goes here...`
+
+Index name is required here as well, for obvious reasons. By default, elasticblob searches across all fields, including those defined by the user during indexing. Results are sorted by the relevance score elasticsearch has assigned to them.
+
+Optional flags:
+
+* `--endpoint HOST`: hostname and port where elasticsearch is running; defaults to `localhost:9200`.
+* `--phrase`: search by complete phrase instead of word-by-word.
+* `--elements`: search only within this comma-separated list of fields. elasticblob defines a `title`, `_content`, `filename`, and `fullpath` for all documents; all others are defined during import using `metadata.yaml`.
+* `--limit`: number of results to return. Defaults to 10.
