@@ -35,6 +35,8 @@ The Next Great American Novel.doc:
         - favorite
 ```
 
+One outstanding problem with this metadata example: it assumes all your filenames are unique across all your directories, which is probably a bad assumption.
+
 Avoid the use of leading underscores in key names, as this may conflict with internal elasticsearch identifiers.
 
 ----
